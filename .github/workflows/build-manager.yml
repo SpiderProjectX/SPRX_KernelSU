@@ -1,15 +1,15 @@
-name: Build Manager
+name: SPRX_KernelSU 
 
 on:
   push:
-    branches: [ "main", "ci" ]
+    branches: [ "SPRX_KernelSU ", "ci" ]
     paths:
       - '.github/workflows/build-manager.yml'
       - 'manager/**'
       - 'kernel/**'
       - 'userspace/ksud/**'
   pull_request:
-    branches: [ "main" ]
+    branches: [ "SPRX_KernelSU " ]
     paths:
       - 'manager/**'
   workflow_call:
