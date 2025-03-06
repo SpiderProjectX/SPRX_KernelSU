@@ -2,7 +2,7 @@ name: SPRX_KernelSU
 
 on:
   push:
-    branches: [ "SPRX_KernelSU ", "ci" ]
+    branches: [ "KernelSU ", "ci" ]
     paths:
       - '.github/workflows/build-manager.yml'
       - 'manager/**'
