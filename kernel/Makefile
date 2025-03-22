@@ -5,7 +5,6 @@ kernelsu-objs += sucompat.o
 kernelsu-objs += throne_tracker.o
 kernelsu-objs += core_hook.o
 kernelsu-objs += ksud.o
-kernelsu-objs += embed_ksud.o
 kernelsu-objs += kernel_compat.o
 
 kernelsu-objs += selinux/selinux.o
@@ -17,19 +16,6 @@ ccflags-y += -I$(objtree)/security/selinux -include $(srctree)/include/uapi/asm-
 # Do checks before compile
 ifneq ($(shell grep -q "int path_umount" $(srctree)/fs/namespace.c; echo $$?),0)
 $(error -- Backporting path_umount is mandatory !! Read: https://kernelsu.org/guide/how-to-integrate-for-non-gki.html#how-to-backport-path-umount)
-endif
-
-# GKI manual hook checks
-# https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/5b8596b5604bcd0e6e12697a01136a0bb9eb0257
-ifeq ($(CONFIG_KSU_MANUAL_HOOK),y)
-ifeq ($(CONFIG_KSU),m)
-$(error CONFIG_KSU_MANUAL_HOOK cannot be enabled when compiling KernelSU as LKM!)
-endif
-else
-# This is useless for non-GKI, only used for checks
-ifeq ($(CONFIG_KPROBES),y)
-ccflags-y += -DKSU_COMPAT_KPROBES
-endif
 endif
 
 obj-$(CONFIG_KSU) += kernelsu.o
@@ -83,6 +69,10 @@ endif
 ifeq ($(shell grep -q "CONFIG_KDP_CRED" $(srctree)/kernel/cred.c; echo $$?),0)
 ccflags-y += -DSAMSUNG_UH_DRIVER_EXIST
 endif
+ifeq ($(shell grep -q "SEC_SELINUX_PORTING_COMMON" $(srctree)/security/selinux/hooks.c; echo $$?),0)
+$(info -- KernelSU compat: Samsung SELinux porting)
+ccflags-y += -DKSU_COMPAT_SELINUX_SEC_PORT
+endif
 
 ifndef KSU_EXPECTED_SIZE
 KSU_EXPECTED_SIZE := 0x389
@@ -99,7 +89,7 @@ endif
 
 $(info -- KernelSU Manager signature size: $(KSU_EXPECTED_SIZE))
 $(info -- KernelSU Manager signature hash: $(KSU_EXPECTED_HASH))
-$(info -- Supported Unofficial Manager: rsuntk (Non-GKI), 5ec1cff (GKI)) 
+$(info -- Supported Unofficial Manager: rsuntk (32-bit)) 
 
 ccflags-y += -DEXPECTED_SIZE=$(KSU_EXPECTED_SIZE)
 ccflags-y += -DEXPECTED_HASH=\"$(KSU_EXPECTED_HASH)\"
