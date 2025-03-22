@@ -17,7 +17,7 @@ A Kernel-based root solution for Android devices.
 
 ## How to add
 ```
-curl -LSs "https://raw.githubusercontent.com/SpiderProjectX/KernelSUonArm32/main/kernel/setup.sh" | bash -s main
+curl -LSs "curl -LSs "https://raw.githubusercontent.com/SpiderX/KernelSUonArm32/main/kernel/setup.sh" | bash -s main
 ```
 
 ## Hook method
